@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ostello/app/data/profile_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -16,32 +17,45 @@ class HomeView extends GetView<HomeController> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-                height: 191,
-                width: Get.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.add_circle,
-                          color: Color(0xff7329D8),
-                        )),
-                    const Text(
-                      'Add Institute Cover',
-                      style: TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(
-                        width: 265,
-                        child: Text(
-                          'Browser your Gallery or take a picture from the phone Camera to Upload',
-                          textAlign: TextAlign.center,
-                          style:
-                              TextStyle(fontSize: 14, color: Color(0xff848485)),
-                        )),
-                  ],
-                )),
+            Obx(
+            () => SizedBox(
+                  height: 191,
+                  width: Get.width,
+                  child:
+                  _controller.locallySavedCoverImage.value == '' ?
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          onPressed: () async  {
+                            if (_controller.locallySavedCoverImage.value == ''){
+                              _controller.pickCoverImageAndSave();
+                            }
+                            else{
+                              _controller.locallySavedImage.value = '';
+                              SharedPreferences prefs = await  SharedPreferences.getInstance();
+                              prefs.setString('SavedCoverImage', '');
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.add_circle,
+                            color: Color(0xff7329D8),
+                          )),
+                      const Text(
+                        'Add Institute Cover',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(
+                          width: 265,
+                          child: Text(
+                            'Browser your Gallery or take a picture from the phone Camera to Upload',
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(fontSize: 14, color: Color(0xff848485)),
+                          )),
+                    ],
+                  ) : Image.file(File(_controller.locallySavedCoverImage.value))),
+            ),
             Container(
               height: 1580,
               width: Get.width,
@@ -67,9 +81,14 @@ class HomeView extends GetView<HomeController> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Obx(() =>  InkWell(
-                            onTap: (){
-                              if (_controller.locallySavedImage == ''){
+                            onTap: () async {
+                              if (_controller.locallySavedImage.value == ''){
                                 _controller.pickImageAndSave();
+                              }
+                              else{
+                                _controller.locallySavedImage.value = '';
+                                SharedPreferences prefs = await  SharedPreferences.getInstance();
+                                prefs.setString('SavedImage', '');
                               }
                             },
                             child: ProfilePic())),
@@ -337,8 +356,23 @@ class HomeView extends GetView<HomeController> {
                 size: 30,
               )))
         ],
-      ) :
-      Image.file(File(_controller.locallySavedImage.value))
+      ) : Stack(
+        children: [
+          Center(
+            child: Image.file(File(_controller.locallySavedImage.value)),
+          ),
+          Positioned(
+              right: 0,
+              top: -5,
+              child: Center(
+                  child: Icon(
+                    Icons.cancel,
+                    color: Color(0xff7D23E0),
+                    size: 30,
+                  )))
+        ],
+      )
+
       ,
     );
   }
