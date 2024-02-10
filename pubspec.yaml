@@ -24,5 +24,12 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/
+  fonts:
+    - family: Avenir
+      fonts:
+        - asset: assets/fonts/Avenir.ttf
+    - family: IngridDarling
+      fonts:
+        - asset: assets/fonts/IngridDarling.ttf
   uses-material-design: true
 

@@ -14,9 +14,10 @@ class HomeController extends GetxController {
    var pickedCoverImage = Rx<XFile?>(null);
    var _coverImageFile = Rx<File?>(null);
 
-
    RxString locallySavedImage = ''.obs;
    RxString locallySavedCoverImage = ''.obs;
+
+   late SharedPreferences prefs;
 
    Future<void> pickImageAndSave() async {
      final imagePicker = ImagePicker();
@@ -29,14 +30,14 @@ class HomeController extends GetxController {
        _imageFile.value = File(pickedImage.value!.path);
      }
 
-     final appDir = await getApplicationDocumentsDirectory();
-     final fileName = 'bg_image.jpg';
+     const fileName = 'bg_image.jpg';
+     final appDir = await getApplicationCacheDirectory();
      final savedImage = await _imageFile.value!.copy('${appDir.path}/$fileName');
      locallySavedImage.value= savedImage.path;
-     SharedPreferences prefs =await  SharedPreferences.getInstance();
-     prefs.setString('SavedImage', savedImage.path);
+     print(savedImage.path);
+     prefs.setString('SavedProfileImage', savedImage.path);
 
-     Get.snackbar('Profile Updated', '',titleText: const Center(child:Text('Profile Updated'),),snackPosition: SnackPosition.BOTTOM);
+     Get.snackbar('Profile Updated', '',titleText: const Center(child:Text('Profile Updated'),),messageText: const Text('Tap to View'),snackPosition: SnackPosition.BOTTOM);
    }
 
    Future<void> pickCoverImageAndSave() async {
@@ -50,11 +51,10 @@ class HomeController extends GetxController {
         _coverImageFile.value = File(pickedCoverImage.value!.path);
     }
 
-    final appDir = await getApplicationDocumentsDirectory();
-    final fileName = 'cover_image.jpg';
+    const fileName = 'cover_image.jpg';
+    final appDir = await getApplicationCacheDirectory();
     final savedImage = await _coverImageFile.value!.copy('${appDir.path}/$fileName');
     locallySavedCoverImage.value= savedImage.path;
-    SharedPreferences prefs = await  SharedPreferences.getInstance();
     prefs.setString('SavedCoverImage', savedImage.path);
 
      Get.snackbar('Cover Photo Updated', '',titleText: const Center(child:Text('Cover Photo Updated'),),snackPosition: SnackPosition.BOTTOM);
@@ -62,11 +62,17 @@ class HomeController extends GetxController {
 
   @override
   void onInit() async {
-     SharedPreferences prefs =await  SharedPreferences.getInstance();
-     String? savedImagePath = prefs.getString('SavedImage');
+
+     prefs = await  SharedPreferences.getInstance();
+
+     dynamic savedImagePath = prefs.getString('SavedProfileImage');
+     print(savedImagePath.runtimeType);
+     /* To obtain the Saved Profile Pic */
      if(savedImagePath != null ){
-        locallySavedImage.value = savedImagePath!;
+        locallySavedImage.value = savedImagePath;
      }
+
+     /* To obtain the Saved Cover Pic */
      String? savedCoverPath = prefs.getString('SavedCoverImage');
      if(savedCoverPath != null){
        locallySavedCoverImage.value = savedCoverPath;
