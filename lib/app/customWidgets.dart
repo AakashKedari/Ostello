@@ -11,7 +11,7 @@ HomeController _controller = HomeController();
 Container PriceButton(String price, String descrip) {
   return Container(
     height: 64,
-    width: 130,
+    width: 120,
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8), color: Color(0xffECD8Ff)),
     child: Column(
@@ -32,7 +32,7 @@ Container PriceButton(String price, String descrip) {
 
 Container SubContainer() {
   return Container(
-    padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
     height: 710,
     decoration: BoxDecoration(
       border: Border.all(color: const Color(0xffD3ACFF), width: 1),
@@ -64,7 +64,7 @@ Container SubContainer() {
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               InkWell(
                 child: PriceButton(
@@ -77,21 +77,27 @@ Container SubContainer() {
               ),
             ],
           ),
-          const Column(
+           const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
+                contentPadding: EdgeInsets.fromLTRB(0, 0  , -5, 0),
                 leading: Text( '\u2022',
                   style: TextStyle(
                     fontSize: 16,
                     height: 1.55,
+                    color: Colors.black87
                   ),),
-                title: Text(
+                subtitle: Text(
                   'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
                   style: TextStyle(fontSize: 14),
                 ),
+
+                dense:  true,
               ),
               ListTile(
+                // contentPadding: EdgeInsets.symmetric(horizontal: 2),
+                contentPadding: EdgeInsets.fromLTRB(0, 0  , -5, 0),
                 leading: Text( '\u2022',
                   style: TextStyle(
                     fontSize: 16,
@@ -101,17 +107,20 @@ Container SubContainer() {
                   'Lorem Ipsum has been the industrys standard dummy text ever since the 1500s',
                   style: TextStyle(fontSize: 14),
                 ),
+                dense: true,
               ),
               ListTile(
+                    contentPadding: EdgeInsets.fromLTRB(0, 0  , -5, 0),
                 leading: Text( '\u2022',
                   style: TextStyle(
                     fontSize: 16,
                     height: 1.55,
                   ),),
-                title: Text(
-                  'when an unknown printer took a galley ',
+                subtitle: Text(
+                  'when an unknown printer took a galley of type and scrambled it to make a type specimen book.',
                   style: TextStyle(fontSize: 14),
                 ),
+                dense:  true,
               ),
             ],
           ),
@@ -121,7 +130,6 @@ Container SubContainer() {
   );
 }
 
-
 Container ProfilePic() {
   return Container(
     height: 108,
@@ -129,7 +137,7 @@ Container ProfilePic() {
     decoration: BoxDecoration(
         color: const Color(0xffF3F7FF),
         borderRadius: BorderRadius.circular(20)),
-    child: _controller.locallySavedImage.value == ''
+    child: _controller.profileUrl.value == null
         ? Stack(
       children: [
         Center(
@@ -149,7 +157,8 @@ Container ProfilePic() {
         : Stack(
       children: [
         Center(
-          child: Image.file(File(_controller.locallySavedImage.value)),
+          child: Image.network(_controller.profileUrl.value!)
+          // Image.file(File(_controller.locallySavedImage.value)),
         ),
         Positioned(
             right: 0,
@@ -285,10 +294,10 @@ Container OfferContainer() {
                       Text(
                           'Accept payment on Google Pay for Business QR to win weekly cashbacks!',
                           style:
-                          bodyMedium?.copyWith(color: Color(0xffADADAD))),
-                      TextButton(
-                          autofocus: true,
-                          onPressed: () {},
+                          bodyMedium?.copyWith(color: const Color(0xffADADAD))),
+                      InkWell(
+
+                          onTap: () {},
                           child: Text(
                             'Check Out!',
                             style: titleSmall?.copyWith(

@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ostello/app/models/user.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class HomeController extends GetxController {
   //TODO: Implement HomeController
@@ -16,6 +18,10 @@ class HomeController extends GetxController {
 
    RxString locallySavedImage = ''.obs;
    RxString locallySavedCoverImage = ''.obs;
+
+   var imageUrl = Rx<String?>(null);
+   var profileUrl = Rx<String?>(null);
+   var coachingName = Rx<String?>(null);
 
    late SharedPreferences prefs;
 
@@ -63,21 +69,21 @@ class HomeController extends GetxController {
   @override
   void onInit() async {
 
-     prefs = await  SharedPreferences.getInstance();
-
-     dynamic savedImagePath = prefs.getString('SavedProfileImage');
-     print(savedImagePath.runtimeType);
-     /* To obtain the Saved Profile Pic */
-     if(savedImagePath != null ){
-        locallySavedImage.value = savedImagePath;
-     }
-
-     /* To obtain the Saved Cover Pic */
-     String? savedCoverPath = prefs.getString('SavedCoverImage');
-     if(savedCoverPath != null){
-       locallySavedCoverImage.value = savedCoverPath;
-     }
-
+     // prefs = await  SharedPreferences.getInstance();
+     //
+     // dynamic savedImagePath = prefs.getString('SavedProfileImage');
+     // print(savedImagePath.runtimeType);
+     // /* To obtain the Saved Profile Pic */
+     // if(savedImagePath != null ){
+     //    locallySavedImage.value = savedImagePath;
+     // }
+     //
+     // /* To obtain the Saved Cover Pic */
+     // String? savedCoverPath = prefs.getString('SavedCoverImage');
+     // if(savedCoverPath != null){
+     //   locallySavedCoverImage.value = savedCoverPath;
+     // }
+     httpCall();
     super.onInit();
   }
 
@@ -90,5 +96,22 @@ class HomeController extends GetxController {
   void onClose() {
     super.onClose();
   }
+  
+  void httpCall() async {
+     try{
+       http.Response response = await  http.get(Uri.parse('http://dev.ostello.co.in/users?phonenumber=9999221511'));
+       if(response.statusCode == 202){
+          UserInfo userInfo = userInfoFromJson(response.body);
+          imageUrl.value=userInfo.message?.institute!.images?[0].url;
+          profileUrl.value=userInfo.message?.institute!.images?[1].url;
+          coachingName.value = userInfo.message?.institute?.name;
+       }
+     }
+     catch(e){
+       print(e.toString());
+     }
+
+  }
+
 
 }

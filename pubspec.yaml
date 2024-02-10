@@ -11,6 +11,8 @@ dependencies:
   image_picker: 1.0.7
   path_provider: 2.1.2
   shared_preferences: 2.2.2
+  http: 1.2.0
+  auto_size_text: 3.0.0
   flutter: 
     sdk: flutter
 
@@ -24,12 +26,12 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/
-  fonts:
+  fonts: 
     - family: Avenir
-      fonts:
+      fonts: 
         - asset: assets/fonts/Avenir.ttf
     - family: IngridDarling
-      fonts:
+      fonts: 
         - asset: assets/fonts/IngridDarling.ttf
   uses-material-design: true
 
